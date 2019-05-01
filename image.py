@@ -17,8 +17,8 @@ print (I1.size, I1.mode, I1.format)
 plt.imshow(np.asarray(I1))
 #plt.show() 
 
-a = np.asarray(I1,dtype=np.float32)
-a = normalize(a, 200, 250)
+a = np.asarray(I,dtype=np.float32)
+a = normalize(a, 100, 250)
 Image.fromarray(a.astype(np.uint8)).save("lena2.png")
 print(a)
 
