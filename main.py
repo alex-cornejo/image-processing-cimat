@@ -1,5 +1,6 @@
 import numpy
 import matplotlib.pyplot as plt
+from PIL import Image 
 
 def normalize(image, a, b):
 	min = numpy.min(image)
@@ -12,7 +13,7 @@ def normalize(image, a, b):
 	return image
 
 def histograma(image):
-	vec=numpy.zeros(255)
+	vec=numpy.zeros(256)
 	for i in range(image.shape[0]):
 		for j in range(image.shape[1]):
 			aux=image[i][j]
@@ -21,16 +22,30 @@ def histograma(image):
 
 
 def obtAcumulativo(vec, max):
-	vecresult=numpy.zeros(255)
+	vecresult=numpy.zeros(256)
 
 	for i in range(max+1):
 		if(i==0):
-			vecresult[i]=vec[0]
+			vecresult[i]=vec[0]/sum(vec)
 		else:
-			vecresult[i]=vec[i]+vecresult[i-1]
+			vecresult[i]=vec[i]/sum(vec)+vecresult[i-1]
 	return vecresult
 
+def ecualizar(vec, range):
+	ecualizado=range*vec
+	ecualizado = ecualizado.astype(int)
+	return ecualizado
 
-image = numpy.array([[2, 2, 3],[4, 5, 6]])
+I = Image.open("lena2.png") #Cargar la imagen
+
+image = numpy.asarray(I,dtype=numpy.int32)
+
+#image = numpy.array([[2, 2, 3],[4, 5, 6]])
 x=histograma(image)
-print (obtAcumulativo(x, 6))	
+plt.plot(x)	
+plt.show()
+x=obtAcumulativo(x, 255)
+x= ecualizar(x,255)
+print(x)
+plt.plot(x)	
+plt.show()
