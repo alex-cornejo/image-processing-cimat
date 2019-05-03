@@ -2,7 +2,6 @@ from __future__ import division   	# impone aritmética no entera en la divisió
 from PIL import Image             	# funciones para cargar y manipular imágenes
 import numpy as np                	# funciones numéricas (arrays, matrices, etc.)
 import matplotlib.pyplot as plt   	# funciones para representación gráfica
-import matplotlib.pyplot as plt
 
 def normalize(image, a, b):
 	min = np.min(image)
@@ -11,11 +10,10 @@ def normalize(image, a, b):
 		for j in range (len(image[i])):
 			x=image[i][j]
 			image[i][j]=a+((x-min)*(b-a))/(max-min)
-
 	return image
 
 def histograma(image):
-	vec=np.zeros(255)
+	vec=np.zeros(256)
 	for i in range(image.shape[0]):
 		for j in range(image.shape[1]):
 			aux=image[i][j]
@@ -24,54 +22,65 @@ def histograma(image):
 	return vec
 
 def obtAcumulativo(vec):
-	vecresult=np.zeros(255)
+	vecresult=np.zeros(256)
 	for i in range(len(vec)):
 		if(i==0):
-			vecresult[i]=vec[0]
+			vecresult[i]=vec[0]/sum(vec)
 		else:
-			vecresult[i]=vec[i]+vecresult[i-1]
+			vecresult[i]=vec[i]/sum(vec)+vecresult[i-1]
 	return vecresult
+
+def ecualizar(vec, range):
+	ecualizado=range*vec
+	ecualizado = ecualizado.astype(int)
+	return ecualizado
+
+def toMatrix(ec, image):
+	for i in range(len(image)):
+		for j in range (len(image[i])):
+			x=image[i][j]
+			image[i][j] = ec[x];
+	return image
 
 def imageNormalize():
 	I = Image.open("lena_problema.jpg") #Cargar la imagen
-	a = np.asarray(I,dtype=np.float32) 	#Convertimos la imagen a una matrix
-	minA= int(input("Dame el valor de a "))
-	maxB= int(input("Dame el valor de b "))
+	a = np.asarray(I,dtype=np.int32) 	#Convertimos la imagen a una matrix
+	minA= int(input("Valor a "))
+	maxB= int(input("Valor b "))
 	a = normalize(a, minA, maxB) 		#Normalizamos la imagen con los datos que nos dan
 	Image.fromarray(a.astype(np.uint8)).save("lena_norma.png")		#Guardamos la imagen.
 	IN = Image.open("lena_norma.png") 	#Cargar la imagen
 	I.show()							#Mostramos la imagen original
 	IN.show()							#Mostramos la imagen ecualizada
 
+def imageEcualiza():
+	I = Image.open("lena_problema.jpg") 	#Cargar la imagen
+	image = np.asarray(I,dtype=np.int32)	#Convertimos la imagen a una matrix
+	x=histograma(image)						# Se obtiene el histograma
 
+	xA = obtAcumulativo(x)
+	xAE= ecualizar(xA,255)
+
+	new_ma = toMatrix(xAE, image)
+	Image.fromarray(new_ma.astype(np.uint8)).save("lena_contra.png")
+	IE = Image.open("lena_contra.png") 	#Cargar la imagen
+	x2=histograma(new_ma)				# Se obtiene el histograma
+
+	I.show()
+	plt.title('Histograma')
+	plt.grid(True)
+	plt.plot(x)
+	plt.show()
+
+	IE.show()
+	plt.title('Histograma')
+	plt.grid(True)
+	plt.plot(x2)
+	plt.show()
 
 # Código para la parte A
-# imageNormalize()
+imageNormalize()
 
+input()
 # Código para la parte B
-I = Image.open("lena_problema.jpg") #Cargar la imagen
-a = np.asarray(I,dtype=np.float32) 	#Convertimos la imagen a una matrix
-a = a.astype(int)
-print(a)						#Convertir una matrix de tipo flotante a intero
-x=histograma(a)
-plt.title('Histograma')
-plt.grid(True)
-plt.plot(x)
-plt.show()
-
-xA = obtAcumulativo(x)
-
-
-print (obtAcumulativo(x))
-
-
-
-
-
-
-# image = np.array([[2, 2, 3],[4, 5, 6]])
-
-
-
-
-
+imageEcualiza()
