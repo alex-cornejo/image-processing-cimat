@@ -36,7 +36,15 @@ def ecualizar(vec, range):
 	ecualizado = ecualizado.astype(int)
 	return ecualizado
 
-I = Image.open("lena2.png") #Cargar la imagen
+def toMatrix(ec, image):
+	for i in range(len(image)):
+		for j in range (len(image[i])):
+			x=image[i][j]
+			image[i][j] = ec[x];
+
+	return image
+
+I = Image.open("lena.png") #Cargar la imagen
 
 image = numpy.asarray(I,dtype=numpy.int32)
 
@@ -46,6 +54,14 @@ plt.plot(x)
 plt.show()
 x=obtAcumulativo(x, 255)
 x= ecualizar(x,255)
-print(x)
-plt.plot(x)	
+
+#print(x)
+#plt.plot(x)	
+#plt.show()
+
+new_ma = toMatrix(x, image)
+Image.fromarray(new_ma.astype(numpy.uint8)).save("lena9.png")
+
+x2=histograma(new_ma)
+plt.plot(x2)
 plt.show()
