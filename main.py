@@ -85,6 +85,13 @@ def imageEcualiza():
 	plt.plot(x)
 	plt.show()
 
+	plt.title('Histograma Acumulativo')
+	plt.grid(True)
+	plt.plot(xA)
+	plt.show()
+	plt.clf()
+
+
 	IE.show()
 	plt.title('Histograma')
 	plt.grid(True)
